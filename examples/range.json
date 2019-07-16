@@ -1,0 +1,10 @@
+{
+    "query": {
+        "range": {
+            "exiftool.CodeSize": {
+                "gte": 12000,
+                "lte": 13000
+            }
+        }
+    }
+}
