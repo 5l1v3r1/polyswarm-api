@@ -1,10 +1,11 @@
 import asyncio
 
 from .engine_resolver import EngineResolver
+
+
 class SingleBountyAssertion(object):
     def __init__(self, ba):
         self.__dict__ = ba
-
 
 
 class BountyAssertions(object):
@@ -53,9 +54,7 @@ class BountyResult(object):
         return BountyAssertions(self.files[file_idx])
 
 
-
 class PolyswarmSearchResults(object):
-
     def __init__(self, raw_result):
         self.raw_result = raw_result
 
