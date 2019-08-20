@@ -69,4 +69,4 @@ class EngineResolver(object):
             self.logger = logging.getLogger(self.get_logger_name())
 
         l = asyncio.get_event_loop()
-        l.create_task(self.get_engines())
+        return l.create_task(self.get_engines())

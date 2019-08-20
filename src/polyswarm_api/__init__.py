@@ -99,6 +99,22 @@ class PolyswarmAsyncAPI(object):
         """
         self.timeout = timeout
 
+    def _fix_votes_and_assertions(self, result):
+        try:
+            for file in result['files']:
+                if 'assertions' in file:
+                    for assertion in file['assertions']:
+                        assertion['engine'] = self.engine_resolver.get_engine_name(assertion['author'])
+                if 'votes' in file:
+                    for vote in file['votes']:
+                        vote['engine'] = self.engine_resolver.get_engine_name(vote['arbiter'])
+        except KeyError:
+            # ignore if not complete
+            pass
+
+
+        return result
+
     def _fix_result(self, result):
         """
         For now, since the name-ETH address mappings are not added by consumer, we add them using
@@ -110,18 +126,8 @@ class PolyswarmAsyncAPI(object):
         """
         if 'uuid' in result:
             result['permalink'] = self.portal_uri + result['uuid']
-        try:
-            for file in result['files']:
-                if 'assertions' in file:
-                    for assertion in file['assertions']:
-                        assertion['engine'] = self.engine_resolver.get_engine_name(assertion['author'])
-                if 'votes' in file:
-                    for vote in file['votes']:
-                        vote['engine'] = self.engine_resolver.get_engine_name(vote['arbiter'])
-        except KeyError:
-            # ignore if not complete
-            return result
 
+        result = self._fix_votes_and_assertions(result)
         result['status'] = 'OK'
 
         return result
@@ -406,6 +412,12 @@ class PolyswarmAsyncAPI(object):
                             'status': 'error'}
 
         response['search'] = '{hash_type}={hash}'.format(hash_type=hash_type, hash=to_scan)
+
+        if response['result']:
+            for ai in response['result'][0].get("artifact_instances", []):
+                if type(ai.get("bountyresult")) is dict:
+                    self._fix_result(ai.get("bountyresult"))
+
         return response
 
     async def search_query(self, query, raw=True):
