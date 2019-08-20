@@ -69,6 +69,9 @@ class PolyswarmSearchResults(object):
 
         return self.result[0]
 
+    def __bool__(self):
+        return bool(self.result)
+
     def get_latest_bounty_with_assertions(self):
         try:
             for artifact_instance in self.search_result.get('artifact_instances', []):
