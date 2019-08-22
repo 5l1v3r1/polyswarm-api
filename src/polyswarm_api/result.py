@@ -54,32 +54,47 @@ class BountyResult(object):
         return BountyAssertions(self.files[file_idx])
 
 
-class PolyswarmSearchResults(object):
+class PolySwarmBaseResult(object):
     def __init__(self, raw_result):
         self.raw_result = raw_result
 
+    @property
+    def status(self):
+        return self.raw_result['status']
+
+    @property
+    def status_ok(self):
+        return self.status == "OK"
+
+    @property
+    def reason(self):
+        return self.raw_result['reason']
 
     @property
     def result(self):
         return self.raw_result['result']
+
+    def __bool__(self):
+        return bool(self.result)
+
+
+class PolyswarmSearchResults(PolySwarmBaseResult):
 
     @property
     def search_result(self):
 
         return self.result[0]
 
-    def __bool__(self):
-        return bool(self.result)
-
     def get_latest_bounty_with_assertions(self):
         try:
             for artifact_instance in self.search_result.get('artifact_instances', []):
-                bountyresult = artifact_instance.get("bountyresult")
-                if bountyresult is None:
-                    continue
-                br = BountyResult(bountyresult)
-                if br.has_assertions():
-                    return br
+                # todo remove this when prod moves over
+                for br_key in ['bountyresult', 'bounty_result']:
+                    bountyresult = artifact_instance.get(br_key)
+                    if bountyresult is None:
+                        continue
+                    br = BountyResult(bountyresult)
+                    if br.has_assertions():
+                        return br
         except IndexError:
             pass
-

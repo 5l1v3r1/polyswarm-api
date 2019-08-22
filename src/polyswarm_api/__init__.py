@@ -1,3 +1,5 @@
+from uuid import UUID
+
 import aiohttp
 import asyncio
 import io
@@ -1098,3 +1100,52 @@ class PolyswarmAPI(object):
         :return: List of signed S3 URLs for tarballs over the last two days
         """
         return self.loop.run_until_complete(self.ps_api.get_stream(destination_dir))
+
+
+def is_hex(value):
+    try:
+        a = int(value, 16)
+        return True
+    except ValueError:
+        return False
+
+
+def _is_valid_sha1(value):
+    if len(value) != 40:
+        return False
+    return is_hex(value)
+
+
+def _is_valid_md5(value):
+    if len(value) != 32:
+        return False
+    return is_hex(value)
+
+
+def _is_valid_sha256(value):
+    if len(value) != 64:
+        return False
+    return is_hex(value)
+
+
+def _is_valid_uuid(value):
+    try:
+        val = UUID(value, version=4)
+        return True
+    except:
+        return False
+
+
+def select_hash_type_by_hash_value(value):
+    d = {
+        "sha256": _is_valid_sha256,
+        "md5": _is_valid_md5,
+        "sha1": _is_valid_sha1
+    }
+
+    for str_rep, check_func in d.items():
+        if check_func(value):
+            return str_rep
+
+    return None
+

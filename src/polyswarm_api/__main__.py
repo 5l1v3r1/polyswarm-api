@@ -4,11 +4,11 @@ import click
 import logging
 import sys
 import os
-from uuid import UUID
 import json
 
 from aiohttp import ServerDisconnectedError
 
+from polyswarm_api import is_hex, _is_valid_sha1, _is_valid_md5, _is_valid_sha256, _is_valid_uuid
 from . import PolyswarmAPI
 from .formatting import PSResultFormatter, PSDownloadResultFormatter, PSSearchResultFormatter, PSHuntResultFormatter, \
     PSHuntSubmissionFormatter, PSStreamFormatter
@@ -16,40 +16,6 @@ from .formatting import PSResultFormatter, PSDownloadResultFormatter, PSSearchRe
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 logger = logging.getLogger(__name__)
-
-
-def is_hex(value):
-    try:
-        a = int(value, 16)
-        return True
-    except ValueError:
-        return False
-
-
-def _is_valid_sha1(value):
-    if len(value) != 40:
-        return False
-    return is_hex(value)
-
-
-def _is_valid_md5(value):
-    if len(value) != 32:
-        return False
-    return is_hex(value)
-
-
-def _is_valid_sha256(value):
-    if len(value) != 64:
-        return False
-    return is_hex(value)
-
-
-def _is_valid_uuid(value):
-    try:
-        val = UUID(value, version=4)
-        return True
-    except:
-        return False
 
 
 def validate_uuid(ctx, param, value):
