@@ -400,9 +400,9 @@ class PolyswarmAsyncAPI(object):
 
                             errors = response.get('errors')
                             raise Exception('Error reading from PolySwarm API: {}'.format(errors))
-                except Exception:
-                    logger.error('Server request failed')
-                    return {'reason': 'unknown_error', 'result': [], 'hash': to_scan,
+                except Exception as e:
+                    logger.error('Server request failed {}'.format(e))
+                    return {'reason': 'unknown_error {}'.format(e), 'result': [], 'hash': to_scan,
                             'search': '{hash_type}={hash}'.format(hash_type=hash_type, hash=to_scan),
                             'status': 'error'}
 
