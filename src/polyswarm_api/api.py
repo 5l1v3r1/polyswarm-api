@@ -7,8 +7,9 @@ except ImportError:
     from urlparse import urlparse
 
 from . import const
-from .endpoint import PolyswarmEndpoint, PolyswarmFuturesExecutor, PolyswarmRequestGenerator
-from .http import PolyswarmHTTPFutures
+from .endpoint import PolyswarmEndpoint, PolyswarmRequestGenerator, \
+    PolyswarmSynchronousExecutor
+from .http import PolyswarmHTTP
 from .types.artifact import ArtifactType, LocalArtifact
 from .types.hash import to_hash
 from .types.query import MetadataQuery
@@ -29,7 +30,7 @@ class PolyswarmAPI(object):
         :param community: Community to scan against.
         :param validate_schemas: Validate JSON objects when creating response objects. Will impact performance.
         """
-        executor = PolyswarmFuturesExecutor(PolyswarmHTTPFutures(key, retries=const.DEFAULT_RETRIES))
+        executor = PolyswarmSynchronousExecutor(PolyswarmHTTP(key, retries=const.DEFAULT_RETRIES))
         generator = PolyswarmRequestGenerator(uri, community)
 
         self.endpoint = PolyswarmEndpoint(generator, executor)
@@ -55,7 +56,9 @@ class PolyswarmAPI(object):
         # We could use as_completed here but it would be out-of-order.
         # TODO should we consider making that an option?
         for h, response in requests:
+
             yield result.SearchResult(h, response.result(), polyswarm=self)
+
 
     def search_by_feature(self, feature, *artifacts):
         """

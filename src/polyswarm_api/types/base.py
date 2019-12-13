@@ -1,4 +1,3 @@
-from jsonschema import validate, ValidationError
 from enum import Enum
 
 from ..log import logger
@@ -24,13 +23,7 @@ class BasePSJSONType(BasePSType):
         self.json = json
 
     def validate(self, json, schema=None):
-        if not schema:
-            schema = self.SCHEMA
-
-        try:
-            validate(json, schema)
-        except ValidationError:
-            raise exceptions.InvalidJSONResponse("Failed to validate json against schema", json, self.SCHEMA)
+        return
 
 
 # TODO make polyswarmartifact support 2.7 so this is not necessary

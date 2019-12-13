@@ -210,23 +210,17 @@ class PolyswarmRequestExecutor(object):
             except HTTPError:
                 return req
 
-        return req
+        class DirtyResponseWrapper(object):
+            def __init__(self, o):
+                self.response = o
+            def result(self):
+                return self.response
+        return DirtyResponseWrapper(req)
 
     def _download_to_fh(self, req, fh):
         raise NotImplementedError
 
 
-class PolyswarmFuturesExecutor(PolyswarmRequestExecutor):
-    def _download_to_fh(self, req, fh):
-        # this is unfortunately the cleanest way I think I can do this with requests-futures
-        # derived partially from https://github.com/ross/requests-futures/issues/54
-        def do_download(r, f):
-            for chunk in r.iter_content(chunk_size=const.DOWNLOAD_CHUNK_SIZE):
-                f.write(chunk)
-            return r
-        resp = req.result()
-        resp.raise_for_status()
-        return self.session.executor.submit(do_download, resp, fh)
 
 
 class PolyswarmSynchronousExecutor(PolyswarmRequestExecutor):

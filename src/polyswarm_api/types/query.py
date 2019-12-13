@@ -1,9 +1,8 @@
 import json
-from jsonschema import validate, ValidationError
+
 
 from .base import BasePSType
-from .schemas import search_schema
-from .. import exceptions
+
 
 
 class Query(BasePSType):
@@ -27,10 +26,7 @@ class MetadataQuery(Query):
         self.validate()
 
     def validate(self):
-        try:
-            validate(self.query, search_schema)
-        except ValidationError:
-            raise exceptions.InvalidJSONResponse("Failed to validate json against schema", self.query, search_schema)
+        return
 
     def __repr__(self):
         return json.dumps(self.query)

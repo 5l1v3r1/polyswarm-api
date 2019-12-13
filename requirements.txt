@@ -5,6 +5,7 @@ jsonschema==3.0.2
 ordered-set==3.1.1
 futures==3.3.0; python_version < '3.0'
 enum34==1.1.6; python_version < '3.0'
+# below here is dev only
 mock==3.0.4; python_version < '3.0'
 requests_mock==1.7.0
 responses==0.10.6
