@@ -7,7 +7,7 @@ try:
 except ImportError:
     from urlparse import urlparse
 
-from future.utils import string_types
+string_types = basestring
 
 from . import exceptions
 from . import const

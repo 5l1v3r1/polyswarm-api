@@ -6,7 +6,9 @@ from binascii import unhexlify
 from enum import Enum
 from hashlib import sha256 as _sha256, sha1 as _sha1, md5 as _md5
 
-from future.utils import raise_from, string_types
+
+
+string_types = basestring
 
 from polyswarm_api.const import FILE_CHUNK_SIZE
 
@@ -398,9 +400,8 @@ class ArtifactType(Enum):
         try:
             return ArtifactType[value.upper()]
         except Exception as e:
-            raise raise_from(
-                exceptions.InvalidValueException(
-                    'Unable to get the artifact type from the provided value {}'.format(value)), e)
+            raise exceptions.InvalidValueException(
+                    'Unable to get the artifact type from the provided value {}'.format(e))
 
     @staticmethod
     def to_string(artifact_type):

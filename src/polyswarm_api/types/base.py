@@ -1,7 +1,5 @@
 import logging
 
-from jsonschema import validate, ValidationError
-
 from .. import exceptions
 
 logger = logging.getLogger(__name__)
@@ -43,18 +41,11 @@ class BasePSJSONType(BasePSResourceType):
         # this is expensive on thousands of objects
         # avoid if disabled
         if self.polyswarm and self.polyswarm.validate:
-            self._validate(value)
+             self.validate(value)
         self._json = value
 
-    def _validate(self, json, schema=None):
-        if not schema:
-            schema = self.SCHEMA
-
-        try:
-            validate(json, schema)
-        except ValidationError:
-            raise exceptions.InvalidJSONResponseException("Failed to validate json against schema", json, self.SCHEMA)
-
+    def validate(self, json, schema=None):
+        pass
 
 # TODO better way to do this with ABC?
 class Hashable:

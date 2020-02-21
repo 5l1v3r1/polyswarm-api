@@ -1,6 +1,6 @@
 import logging
 import json
-from future.utils import raise_from
+
 from copy import deepcopy
 
 from . import const
@@ -120,9 +120,9 @@ class PolyswarmRequest(object):
                                                               **self.parser_kwargs)
         except JSONDecodeError as e:
             if self.status_code == 404:
-                raise raise_from(exceptions.NotFoundException(self, 'The requested endpoint does not exist.'), e)
+                raise exceptions.NotFoundException(self, 'The requested endpoint does not exist.')
             else:
-                raise raise_from(exceptions.RequestException(self, 'Server returned non-JSON response.'), e)
+                raise exceptions.RequestException(self, 'Server returned non-JSON response.')
 
     def __iter__(self):
         return self.consume_results()
